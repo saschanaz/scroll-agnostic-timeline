@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "declaration": true,
+        "sourceMap": true,
+        "strict": true,
+        "outDir": "lib/",
+        "module": "umd",
+        "moduleResolution": "node"
+    }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "scroll-agnostic-timeline",
+  "version": "1.0.0",
+  "description": "Controls item addition/deletion depeding on the current scroll position",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "timeline"
+  ],
+  "author": "Kagami Sascha Rosylight <saschanaz@outlook.com>",
+  "license": "ISC",
+  "dependencies": {
+    "visible-children-observer": "^2.0.0"
+  }
+}
