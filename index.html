@@ -6,8 +6,19 @@
   <style>
     sa-timeline {
       display: block;
-      height: 200px;
+      width: 300px;
+      height: 300px;
       overflow: auto;
+    }
+
+    .block {
+      background-color: pink;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      margin: 5px;
     }
   </style>
   <script>
@@ -31,6 +42,7 @@
 
       button.addEventListener("click", () => {
         const element = document.createElement("div");
+        element.classList.add("block");
         element.data = { i: Math.floor(Math.random() * 100000) }
         element.textContent = element.data.i;
         timeline.appendChild(element);
