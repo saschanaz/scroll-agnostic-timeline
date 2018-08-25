@@ -1,3 +1,5 @@
+/// <reference path="../lib/workaround.d.ts" />
+
 import * as observer from "visible-children-observer";
 
 interface InternalStatus<T> {
