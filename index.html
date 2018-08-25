@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <style>
+    sa-timeline {
+      display: block;
+      width: 300px;
+      height: 300px;
+      overflow: auto;
+    }
+
+    .block {
+      background-color: pink;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      margin: 5px;
+    }
+  </style>
+  <script>
+    var require = dep => {
+      if (dep === "visible-children-observer") {
+        return VisibleChildrenObserver;
+      }
+      throw new Error("Unknown dependency");
+    };
+  </script>
+  <script src="node_modules/@webcomponents/custom-elements/custom-elements.min.js"></script>
+  <script src="node_modules/visible-children-observer/lib/index.js"></script>
+  <script src="lib/index.js"></script>
+  <script>
+    customElements.define("sa-timeline", ScrollAgnosticTimeline.default);
+    const timeline = new ScrollAgnosticTimeline.default;
+    document.addEventListener("DOMContentLoaded", () => {
+      timeline.compare = (x, y) => y.data.i - x.data.i;
+      timeline.max = 100;
+      document.body.appendChild(timeline);
+
+      button.addEventListener("click", () => {
+        const element = document.createElement("div");
+        element.classList.add("block");
+        element.data = { i: Math.floor(Math.random() * 100000) }
+        element.textContent = element.data.i;
+        timeline.appendChild(element);
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <button id="button">Add random</button>
+</body>
+
+</html>
