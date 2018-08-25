@@ -50,19 +50,19 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
   private _removeByInvisibility(count: number) {
     const visibles = observer.getVisibleChildren(this);
     while (this.childNodes.length && count > 0) {
-      let removed = false;
+      let removed = 0;
       if (this.lastElementChild && !visibles.includes(this.lastElementChild)) {
         this.lastElementChild.remove();
-        removed = true;
+        removed++;
       }
       if (this.firstElementChild && !visibles.includes(this.firstElementChild)) {
         this.firstElementChild.remove();
-        removed = true;
+        removed++;
       }
       if (!removed) {
         break; // no more possible removal
       }
-      count--;
+      count -= removed;
     }
   }
 
