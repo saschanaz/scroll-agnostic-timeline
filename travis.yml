@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - node
+
+before_deploy:
+  - npx jake
+  - mkdir out
+  - mv index.html lib out/
+deploy:
+  local-dir: out
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  on:
+    branch: master
