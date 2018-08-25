@@ -1,0 +1,7 @@
+extends: "tslint:recommended"
+rules:
+  interface-name: false
+  member-access: false
+  member-ordering: false
+  trailing-comma: false
+  variable-name: false

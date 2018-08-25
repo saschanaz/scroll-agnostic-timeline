@@ -85,11 +85,9 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
 
       if (comparison === 0) {
         return middle;
-      }
-      else if (comparison < 0) {
+      } else if (comparison < 0) {
         right = middle - 1;
-      }
-      else {
+      } else {
         left = middle + 1;
       }
     }
@@ -123,8 +121,7 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     const offset = first && first.offsetTop;
     if (!this.childNodes.length || !this._status.compare) {
       super.insertBefore(newChild, this.childNodes[0]);
-    }
-    else {
+    } else {
       const index = this._findInsertionPositionBinary(newChild);
       super.insertBefore(newChild, this.childNodes[index]);
     }
