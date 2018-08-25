@@ -5,9 +5,8 @@ node_js:
 before_deploy:
   - npx jake
   - mkdir out
-  - mv index.html lib out/
-  - mkdir out/node_modules
-  - rsync -avzn --list-only --include '@webcomponents/***' --include 'visible-children-observer/***' --exclude '*' node_modules/ out/node_modules
+  - npm prune --only=production
+  - mv index.html package.json node_modules lib out/
 deploy:
   local-dir: out
   provider: pages
