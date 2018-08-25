@@ -3,5 +3,6 @@ rules:
   interface-name: false
   member-access: false
   member-ordering: false
+  no-reference: false
   trailing-comma: false
   variable-name: false
