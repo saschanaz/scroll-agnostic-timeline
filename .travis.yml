@@ -7,7 +7,7 @@ before_deploy:
   - mkdir out
   - mv index.html lib out/
   - mkdir out/node_modules
-  - rsync -avzn --list-only --include '@webcomponents/***' --include 'visible-children-observer/***' node_modules/ out/node_modules
+  - rsync -avzn --list-only --include '@webcomponents/***' --include 'visible-children-observer/***' --exclude '*' node_modules/ out/node_modules
 deploy:
   local-dir: out
   provider: pages
