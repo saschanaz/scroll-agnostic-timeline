@@ -5,7 +5,7 @@ interface InternalStatus<T> {
   max: number;
 }
 
-export default class ScrollAgnosticTimeline<T extends Element> extends HTMLElement {
+export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLElement {
   private _status: InternalStatus<T> = {
     compare: null,
     max: Infinity
@@ -106,7 +106,21 @@ export default class ScrollAgnosticTimeline<T extends Element> extends HTMLEleme
     return left;
   }
 
+  private _getVisibleFirstChild() {
+    const visibles = observer.getVisibleChildren(this);
+    if (!visibles.length) {
+      return;
+    }
+    let previous = visibles[0];
+    while (previous.previousElementSibling && visibles.includes(previous.previousElementSibling)) {
+      previous = previous.previousElementSibling;
+    }
+    return previous as HTMLElement;
+  }
+
   appendChild(newChild: T) {
+    const first = this._getVisibleFirstChild();
+    const offset = first && first.offsetTop;
     if (!this.childNodes.length || !this._status.compare) {
       super.insertBefore(newChild, this.childNodes[0]);
     }
@@ -116,6 +130,9 @@ export default class ScrollAgnosticTimeline<T extends Element> extends HTMLEleme
     }
     if (this.childNodes.length > this._status.max) {
       this._removeByInvisibility(1);
+    }
+    if (!("overflow-anchor" in this.style) && first && this.scrollTop > 0) {
+      this.scrollTop += first.offsetTop - offset!;
     }
     return newChild;
   }
