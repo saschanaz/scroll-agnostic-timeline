@@ -13,5 +13,10 @@
   "license": "ISC",
   "dependencies": {
     "visible-children-observer": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/jake": "0.0.30",
+    "@webcomponents/custom-elements": "^1.2.0",
+    "jake": "^8.0.18"
   }
 }
