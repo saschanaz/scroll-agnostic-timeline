@@ -1,3 +1,4 @@
+/// <reference path="workaround.d.ts" />
 interface InternalStatus<T> {
     compare: ((x: T, y: T) => number) | null;
     max: number;

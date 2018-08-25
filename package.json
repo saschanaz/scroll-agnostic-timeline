@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Controls item addition/deletion depeding on the current scroll position",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "npx tslint -t verbose sources/*"
   },
