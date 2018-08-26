@@ -7,6 +7,22 @@ interface InternalStatus<T> {
   max: number;
 }
 
+interface BeforeAutoRemoveEventInit<T extends HTMLElement> extends EventInit {
+  elementToBeRemoved: T;
+}
+
+export class BeforeAutoRemoveEvent<T extends HTMLElement> extends Event {
+  elementToBeRemoved: T;
+  constructor(typeArg: string, eventInit: BeforeAutoRemoveEventInit<T>) {
+    super(typeArg, eventInit);
+    this.elementToBeRemoved = eventInit.elementToBeRemoved;
+  }
+}
+
+export interface ScrollAgnosticTimelineEventMap extends HTMLElementEventMap {
+  "beforeautoremove": Event;
+}
+
 export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLElement {
   private _status: InternalStatus<T> = {
     compare: null,
@@ -52,11 +68,11 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     while (this.childNodes.length && count > 0) {
       let removed = 0;
       if (this.lastElementChild && !visibles.includes(this.lastElementChild)) {
-        this.lastElementChild.remove();
+        this._autoRemove(this.lastElementChild as T);
         removed++;
       }
       if (this.firstElementChild && !visibles.includes(this.firstElementChild)) {
-        this.firstElementChild.remove();
+        this._autoRemove(this.firstElementChild as T);
         removed++;
       }
       if (!removed) {
@@ -134,5 +150,11 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
       this.scrollTop += first.offsetTop - offset!;
     }
     return newChild;
+  }
+  
+  private _autoRemove(oldChild: T) {
+    const ev = new BeforeAutoRemoveEvent("beforeautoremove", { elementToBeRemoved: oldChild });
+    this.dispatchEvent(ev);
+    this.removeChild(oldChild);
   }
 }

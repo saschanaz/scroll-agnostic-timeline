@@ -48,6 +48,9 @@
         timeline.appendChild(element);
       });
     });
+    timeline.addEventListener("beforeautoremove", ev => {
+      ev.elementToBeRemoved
+    });
   </script>
 </head>
 
