@@ -137,14 +137,14 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
   appendChild(newChild: T) {
     const first = this._getVisibleFirstChild();
     const offset = first && first.offsetTop;
+    if (this.childNodes.length === this._status.max) {
+      this._removeByInvisibility(1);
+    }
     if (!this.childNodes.length || !this._status.compare) {
       super.insertBefore(newChild, this.childNodes[0]);
     } else {
       const index = this._findInsertionPositionBinary(newChild);
       super.insertBefore(newChild, this.childNodes[index]);
-    }
-    if (this.childNodes.length > this._status.max) {
-      this._removeByInvisibility(1);
     }
     if (!("overflow-anchor" in this.style) && first && this.scrollTop > 0) {
       this.scrollTop += first.offsetTop - offset!;
