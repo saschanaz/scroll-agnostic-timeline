@@ -8,14 +8,14 @@ interface InternalStatus<T> {
 }
 
 interface BeforeAutoRemoveEventInit<T extends HTMLElement> extends EventInit {
-  elementToBeRemoved: T;
+  exChild: T;
 }
 
 export class BeforeAutoRemoveEvent<T extends HTMLElement> extends Event {
-  elementToBeRemoved: T;
+  exChild: T;
   constructor(typeArg: string, eventInit: BeforeAutoRemoveEventInit<T>) {
     super(typeArg, eventInit);
-    this.elementToBeRemoved = eventInit.elementToBeRemoved;
+    this.exChild = eventInit.exChild;
   }
 }
 
@@ -153,7 +153,7 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
   }
 
   private _autoRemove(oldChild: T) {
-    const ev = new BeforeAutoRemoveEvent("beforeautoremove", { elementToBeRemoved: oldChild });
+    const ev = new BeforeAutoRemoveEvent("beforeautoremove", { exChild: oldChild });
     this.dispatchEvent(ev);
     this.removeChild(oldChild);
   }
