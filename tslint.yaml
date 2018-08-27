@@ -1,6 +1,7 @@
 extends: "tslint:recommended"
 rules:
   interface-name: false
+  max-classes-per-file: false
   member-access: false
   member-ordering: false
   no-reference: false

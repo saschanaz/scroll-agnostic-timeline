@@ -151,7 +151,7 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     }
     return newChild;
   }
-  
+
   private _autoRemove(oldChild: T) {
     const ev = new BeforeAutoRemoveEvent("beforeautoremove", { elementToBeRemoved: oldChild });
     this.dispatchEvent(ev);
