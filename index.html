@@ -43,7 +43,11 @@
       border-color: hotpink;
     }
 
-    .container:not(.hashole) .hole {
+    .container:not(.hashole) .hole:first-child {
+      display: none;
+    }
+
+    .container:not(:last-child) .hole:last-child, .container.lastitem .hole:last-child {
       display: none;
     }
   </style>
@@ -72,18 +76,33 @@
       timeline.compare = (x, y) => y.data.i - x.data.i;
       timeline.max = 30;
       document.body.appendChild(timeline);
+      for (let i = 0; i < 10; i++) {
+        addRandomizedBlock();
+      }
 
-      button.addEventListener("click", () => {
+      button.addEventListener("click", addRandomizedBlock);
+
+      function addRandomizedBlock() {
         const element = createBlock(Math.floor(Math.random() * 100000));
         timeline.appendChild(element);
-      });
+      }
 
       function holeListener(ev) {
         const parent = ev.target.parentElement;
-        ev.target.parentElement.classList.remove("hashole")
+        parent.classList.remove("hashole")
         const previousSiblingData = parent.previousSibling ? parent.previousSibling.data.i : (parent.data.i + 2)
         const middle = Math.floor((parent.data.i + previousSiblingData) / 2);
         timeline.appendChild(createBlock(middle));
+      }
+
+      function lastHoleListener(ev) {
+        const parent = ev.target.parentElement;
+        const half = Math.floor(parent.data.i / 2);
+        if (half === 0) {
+          parent.classList.add("lastitem");
+          return;
+        }
+        timeline.appendChild(createBlock(half));
       }
 
       function createBlock(i) {
@@ -97,6 +116,9 @@
         element.classList.add("block");
         element.textContent = i;
         container.appendChild(element);
+        const lastHole = holeBase.cloneNode(true);
+        lastHole.addEventListener("click", lastHoleListener);
+        container.appendChild(lastHole);
         return container;
       }
     });
