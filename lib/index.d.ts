@@ -4,10 +4,10 @@ interface InternalStatus<T> {
     max: number;
 }
 interface BeforeAutoRemoveEventInit<T extends HTMLElement> extends EventInit {
-    exChild: T;
+    oldChild: T;
 }
 export declare class BeforeAutoRemoveEvent<T extends HTMLElement> extends Event {
-    exChild: T;
+    oldChild: T;
     constructor(typeArg: string, eventInit: BeforeAutoRemoveEventInit<T>);
 }
 export interface ScrollAgnosticTimelineEventMap extends HTMLElementEventMap {
