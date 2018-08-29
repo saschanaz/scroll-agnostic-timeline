@@ -128,8 +128,8 @@
     });
 
     timeline.addEventListener("beforeautoremove", ev => {
-      if (ev.exChild.nextSibling) {
-        ev.exChild.nextSibling.classList.add("hashole");
+      if (ev.oldChild.nextSibling) {
+        ev.oldChild.nextSibling.classList.add("hashole");
       }
     });
   </script>
