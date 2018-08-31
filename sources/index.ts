@@ -4,6 +4,8 @@ import * as observer from "visible-children-observer";
 
 interface InternalStatus<T> {
   compare: ((x: T, y: T) => number) | null;
+  /** Childrens that won't be removed before the next frame */
+  guard: Set<T>;
   max: number;
 }
 
@@ -26,7 +28,8 @@ export interface ScrollAgnosticTimelineEventMap extends HTMLElementEventMap {
 export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLElement {
   private _status: InternalStatus<T> = {
     compare: null,
-    max: Infinity
+    guard: new Set(),
+    max: Infinity,
   };
 
   get compare() {
@@ -67,11 +70,11 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     const visibles = observer.getVisibleChildren(this);
     while (this.childNodes.length && count > 0) {
       let removed = 0;
-      if (this.lastElementChild && !visibles.includes(this.lastElementChild)) {
+      if (this.lastElementChild && !this._isGuarded(visibles, this.lastElementChild)) {
         this._autoRemove(this.lastElementChild as T);
         removed++;
       }
-      if (this.firstElementChild && !visibles.includes(this.firstElementChild)) {
+      if (this.firstElementChild && !this._isGuarded(visibles, this.firstElementChild)) {
         this._autoRemove(this.firstElementChild as T);
         removed++;
       }
@@ -80,6 +83,10 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
       }
       count -= removed;
     }
+  }
+
+  private _isGuarded(visibles: Element[], element: Element) {
+    return visibles.includes(element) || this._status.guard.has(element as T);
   }
 
   constructor() {
@@ -137,9 +144,14 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
   appendChild(newChild: T) {
     const first = this._getVisibleFirstChild();
     const offset = first && first.offsetTop;
-    if (this.childNodes.length === this._status.max) {
-      this._removeByInvisibility(1);
+    if (this.childNodes.length >= this._status.max) {
+      // Children can be exceptionally more than the max value
+      // when every children is visible
+      const count = this.childNodes.length - this._status.max + 1;
+      this._removeByInvisibility(count);
     }
+    // Prevent removal until the next frame
+    this._status.guard.add(newChild);
     if (!this.childNodes.length || !this._status.compare) {
       super.insertBefore(newChild, this.childNodes[0]);
     } else {
@@ -149,6 +161,8 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     if (!("overflow-anchor" in this.style) && first && this.scrollTop > 0) {
       this.scrollTop += first.offsetTop - offset!;
     }
+    // Remove from the guard when the browser updates painting
+    requestAnimationFrame(() => this._status.guard.delete(newChild));
     return newChild;
   }
 
