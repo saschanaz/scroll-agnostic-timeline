@@ -1,6 +1,8 @@
 /// <reference path="workaround.d.ts" />
 interface InternalStatus<T> {
     compare: ((x: T, y: T) => number) | null;
+    /** Childrens that won't be removed before the next frame */
+    guard: Set<T>;
     max: number;
 }
 interface BeforeAutoRemoveEventInit<T extends HTMLElement> extends EventInit {
@@ -18,6 +20,7 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     compare: InternalStatus<T>["compare"];
     max: number;
     private _removeByInvisibility;
+    private _isGuarded;
     constructor();
     private _findInsertionPositionBinary;
     private _getVisibleFirstChild;

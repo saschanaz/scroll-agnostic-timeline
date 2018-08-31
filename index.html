@@ -94,9 +94,23 @@
       function holeListener(ev) {
         const parent = ev.target.parentElement;
         parent.classList.remove("hashole")
-        const previousSiblingData = parent.previousSibling ? parent.previousSibling.data.i : (parent.data.i + 2)
-        const middle = Math.floor((parent.data.i + previousSiblingData) / 2);
-        timeline.appendChild(createBlock(middle));
+        const previousSiblingData = parent.previousSibling ? parent.previousSibling.data.i : (parent.data.i + 100)
+        for (const randomized of getRandomized(parent.data.i, previousSiblingData, 5)) {
+          timeline.appendChild(createBlock(randomized));
+        }
+      }
+
+      function getRandomized(rangeStart, rangeEnd, count) {
+        const set = new Set();
+        const size = rangeEnd - rangeStart;
+        if (count > size) {
+          count = size;
+        }
+        while (set.size < count) {
+          const item = Math.floor(rangeStart + Math.random() * size);
+          set.add(item);
+        }
+        return [...set];
       }
 
       function lastHoleListener(ev) {
@@ -106,7 +120,9 @@
           parent.classList.add("lastitem");
           return;
         }
-        timeline.appendChild(createBlock(half));
+        for (const randomized of getRandomized(half, parent.data.i, 5)) {
+          timeline.appendChild(createBlock(randomized));
+        }
       }
 
       function createBlock(i) {
