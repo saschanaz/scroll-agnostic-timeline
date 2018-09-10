@@ -222,4 +222,11 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
       isDupe: this._status.map.has(id)
     }
   }
+
+  find(id: string | number) {
+    if (!this._status.identify) {
+      throw new Error("`identify` callback should exist to find by id");
+    }
+    return this._status.map.get(id);
+  }
 }
