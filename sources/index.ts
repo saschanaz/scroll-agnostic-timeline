@@ -220,7 +220,7 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     return {
       id,
       isDupe: this._status.map.has(id)
-    }
+    };
   }
 
   find(id: string | number) {
