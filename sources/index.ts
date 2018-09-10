@@ -6,6 +6,8 @@ interface InternalStatus<T> {
   compare: ((x: T, y: T) => number) | null;
   /** Childrens that won't be removed before the next frame */
   guard: Set<T>;
+  identify: ((x: T) => string | number) | null;
+  map: Map<string | number, T>;
   max: number;
 }
 
@@ -29,6 +31,8 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
   private _status: InternalStatus<T> = {
     compare: null,
     guard: new Set(),
+    identify: null,
+    map: new Map(),
     max: Infinity,
   };
 
@@ -52,6 +56,35 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     for (const node of childNodes) {
       super.appendChild(node);
     }
+  }
+
+  get identify() {
+    return this._status.identify;
+  }
+  set identify(identify: InternalStatus<T>["identify"]) {
+    if (!identify) {
+      this._status.map.clear();
+      return;
+    }
+
+    // NOTE: do not directly modify the current id map
+    // to keep things atomic
+
+    const map = new Map<string | number, T>();
+
+    const dupes: Node[] = [];
+    for (const child of this.childNodes) {
+      const id = identify(child as T);
+      if (map.has(id)) {
+        dupes.push(child);
+      }
+      map.set(id, child as T);
+    }
+    for (const dup of dupes) {
+      this.removeChild(dup);
+    }
+    this._status.map = map;
+    this._status.identify = identify;
   }
 
   get max() {
@@ -142,6 +175,10 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
   }
 
   appendChild(newChild: T) {
+    const dupeCheck = this._checkDupe(newChild);
+    if (dupeCheck && dupeCheck.isDupe) {
+      return newChild; // silently ignore when duped
+    }
     const first = this._getVisibleFirstChild();
     const offset = first && first.offsetTop;
     if (this.childNodes.length >= this._status.max) {
@@ -158,6 +195,9 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
       const index = this._findInsertionPositionBinary(newChild);
       super.insertBefore(newChild, this.childNodes[index]);
     }
+    if (dupeCheck) {
+      this._status.map.set(dupeCheck.id, newChild);
+    }
     if (!("overflow-anchor" in this.style) && first && this.scrollTop > 0) {
       this.scrollTop += first.offsetTop - offset!;
     }
@@ -170,5 +210,16 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     const ev = new BeforeAutoRemoveEvent("beforeautoremove", { oldChild });
     this.dispatchEvent(ev);
     this.removeChild(oldChild);
+  }
+
+  private _checkDupe(newChild: T) {
+    if (!this._status.identify) {
+      return;
+    }
+    const id = this._status.identify(newChild);
+    return {
+      id,
+      isDupe: this._status.map.has(id)
+    }
   }
 }
