@@ -51,7 +51,7 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     // assign only when everything goes well
     this._status.compare = compare;
     while (this.firstChild) {
-      this.removeChild(this.firstChild);
+      this.removeChild(this.firstChild as T);
     }
     for (const node of childNodes) {
       super.appendChild(node);
@@ -81,7 +81,7 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
       map.set(id, child as T);
     }
     for (const dup of dupes) {
-      this.removeChild(dup);
+      this.removeChild(dup as T);
     }
     this._status.map = map;
     this._status.identify = identify;
@@ -204,6 +204,14 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     // Remove from the guard when the browser updates painting
     requestAnimationFrame(() => this._status.guard.delete(newChild));
     return newChild;
+  }
+
+  removeChild(oldChild: T) {
+    if (this._status.identify) {
+      const id = this._status.identify(oldChild);
+      this._status.map.delete(id);
+    }
+    super.removeChild(oldChild);
   }
 
   private _autoRemove(oldChild: T) {

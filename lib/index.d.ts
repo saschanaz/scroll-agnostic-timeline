@@ -28,6 +28,7 @@ export default class ScrollAgnosticTimeline<T extends HTMLElement> extends HTMLE
     private _findInsertionPositionBinary;
     private _getVisibleFirstChild;
     appendChild(newChild: T): T;
+    removeChild(oldChild: T): void;
     private _autoRemove;
     private _checkDupe;
     find(id: string | number): T | undefined;
